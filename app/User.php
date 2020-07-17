@@ -5,10 +5,25 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
+use Laravel\Passport\HasApiTokens;
 
-class User extends Authenticatable
+/**
+ * @method static create(array $array)
+ * @method static truncate()
+ */
+class User extends Authenticatable implements MustVerifyEmail
 {
-    use Notifiable;
+    use Notifiable, HasApiTokens;
+
+
+    const VERIFIED_USER = '1';
+    const UNVERIFIED_USER = '0';
+
+    const ADMIN_USER = 'true';
+    const REGULAR_USER = 'false';
+
+    protected $table ='users';
 
     /**
      * The attributes that are mass assignable.
@@ -37,6 +52,8 @@ class User extends Authenticatable
         'available_date',
         'available_time',
         'note',
+//        'facebook_id',
+//        'google_id',
 
 
     ];
@@ -49,7 +66,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'verification_token'
     ];
 
     /**
@@ -60,4 +77,18 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function isVerified(){
+        return $this->verified == User::VERIFIED_USER;
+    }
+
+    public function isAdmin(){
+        return $this->admin == User::ADMIN_USER;
+    }
+
+//Untuk amanin dari metode brute force verification token
+    public static function generateVerificationCode()
+    {
+        return str::random(40);
+    }
 }

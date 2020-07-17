@@ -17,3 +17,33 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+Route::post('/register','User\AuthController@register');
+Route::post('/login','User\AuthController@login');
+Route::post('/logout','User\AuthController@logout');
+
+Route::post('/password/email','User\ForgotPasswordController@sendResetLinkEmail');
+Route::post('/password/reset','User\ResetPasswordController@reset');
+
+
+Route::get('/email/resend', 'User\VerificationController@resend')->name('verification.resend');
+Route::get('/email/verify/{id}/{hash}', 'User\VerificationController@verify')->name('verification.verify');
+
+
+
+Route::resource('tutorlenta','Tutorlenta\TutorlentaController');
+
+Route::resource('kawanlenta','Kawanlenta\KawanlentaController');
+
+Route::resource('course','Course/CourseController');
+
+Route::resource('category','Category/CategoryController');
+
+Route::resource('transaction','Transaction/TransactionController');
+
+Route::resource('user','User/UserController');
+
+
+
+
